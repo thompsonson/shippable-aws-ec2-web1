@@ -1,6 +1,6 @@
 resources:
 # Automation scripts repo
-  - name: aws_ec2_repo
+  - name: aws_ec2_web1_repo
     type: gitRepo
     integration: "drship_github"
     versionTemplate:
@@ -8,17 +8,17 @@ resources:
       branch: master
 
 # AWS credentials
-  - name: aws_ec2_creds
+  - name: aws_ec2_web1_creds
     type: integration
     integration: "dr_aws"      
 
 # AWS PEM Key
-  - name: aws_ec2_pem
+  - name: aws_ec2_web1_pem
     type: integration
     integration: "drship_aws_pem"    
 
 # Output of EC2 provisioning
-  - name: aws_ec2_info
+  - name: aws_ec2_web1_info
     type: params
     versionTemplate:
       params:
@@ -26,14 +26,14 @@ resources:
 
 jobs:
 # Provision AWS EC2 with Ansible
-  - name: prov_aws_ec2_ans
+  - name: prov_aws_ec2_web1_ans
     type: runSh
     steps:
-      - IN: aws_ec2_repo
+      - IN: aws_ec2_web1_repo
         switch: off
-      - IN: aws_ec2_creds
+      - IN: aws_ec2_web1_creds
         switch: off
-      - IN: aws_ec2_pem
+      - IN: aws_ec2_web1_pem
         switch: off
       # This resource is defined in the AWS VPC provisioning tutorial: http://docs.shippable.com/provision/tutorial/provision-aws-vpc-ansible
       # If you have not followed that tutorial, please delete this resource
@@ -56,14 +56,14 @@ jobs:
                 # - public_subnet_id: <hardcoded value>  # Uncomment if you deleted the aws_vpc_info resource            
           script:
             # Change directory to the folder containing ansible scripts
-            - pushd $(shipctl get_resource_state "aws_ec2_repo")/ansible
+            - pushd $(shipctl get_resource_state "aws_ec2_web1_repo")/ansible
             # Export access and secret keys from the aws_ec2_creds integration
-            - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_ec2_creds "accessKey")
-            - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_resource_field aws_ec2_creds "secretKey")
+            - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_ec2_web1_creds "accessKey")
+            - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_resource_field aws_ec2_web1_creds "secretKey")
             # Replace wildcards
             - shipctl replace variables.yml
             # Run playbook
             - ansible-playbook -v ec2_prov_playbook.yml
-      - OUT: aws_ec2_info
+      - OUT: aws_ec2_web1_info
         overwrite: true
   
