@@ -44,7 +44,7 @@ jobs:
           runtime:
             options:
               env:
-                - STATE_RES_NAME: "aws_ec2_info"
+                - STATE_RES_NAME: "aws_ec2_web1_info"
                 - ec2_region: "us-east-1"
                 - ec2_tag_Type: "t2.micro"
                 - ec2_image: "ami-43a15f3e"
